@@ -3008,7 +3008,7 @@ Use markdown formatting with **bold** for emphasis and bullet points where appro
         // Load conversation history from MongoDB
         try {
             const username = getCurrentIdentifier();
-            const response = await fetch(`http://localhost:3000/api/guru/history/${username}/${guruSessionId}`);
+            const response = await fetch(`${API_BASE_URL}/guru/history/${username}/${guruSessionId}`);
             const data = await response.json();
             
             if (data.success && data.messages && data.messages.length > 0) {
@@ -3044,7 +3044,7 @@ Use markdown formatting with **bold** for emphasis and bullet points where appro
         
         try {
             const username = getCurrentIdentifier();
-            const response = await fetch(`http://localhost:3000/api/guru/sessions/${username}`);
+            const response = await fetch(`${API_BASE_URL}/guru/sessions/${username}`);
             const data = await response.json();
             
             const chatHistoryList = document.getElementById('chatHistoryList');
@@ -3110,7 +3110,7 @@ Use markdown formatting with **bold** for emphasis and bullet points where appro
         
         try {
             const username = getCurrentIdentifier();
-            await fetch(`http://localhost:3000/api/guru/clear/${username}/${sessionId}`, {
+            await fetch(`${API_BASE_URL}/guru/clear/${username}/${sessionId}`, {
                 method: 'DELETE'
             });
             
@@ -3140,7 +3140,7 @@ Use markdown formatting with **bold** for emphasis and bullet points where appro
         
         try {
             const username = getCurrentIdentifier();
-            await fetch('http://localhost:3000/api/guru/save-message', {
+            await fetch(`${API_BASE_URL}/guru/save-message`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -3337,7 +3337,7 @@ Use markdown formatting with **bold** for emphasis and bullet points where appro
         try {
             const username = getCurrentIdentifier();
             // Clear from MongoDB
-            await fetch(`http://localhost:3000/api/guru/clear/${username}/${guruSessionId}`, {
+            await fetch(`${API_BASE_URL}/guru/clear/${username}/${guruSessionId}`, {
                 method: 'DELETE'
             });
             

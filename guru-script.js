@@ -179,7 +179,7 @@ async function loadChatHistoryList() {
     console.log('Loading chat history for user:', user.email);
     
     try {
-        const response = await fetch(`http://localhost:3000/api/guru/sessions/${user.email}`);
+        const response = await fetch(`${API_BASE_URL}/guru/sessions/${user.email}`);
         
         if (!response.ok) {
             throw new Error(`Server returned ${response.status}: ${response.statusText}`);
@@ -263,7 +263,7 @@ async function deleteChatSession(sessionId) {
     }
     
     try {
-        await fetch(`http://localhost:3000/api/guru/clear/${user.email}/${sessionId}`, {
+        await fetch(`${API_BASE_URL}/guru/clear/${user.email}/${sessionId}`, {
             method: 'DELETE'
         });
         
@@ -289,7 +289,7 @@ async function saveGuruMessage(role, content) {
     if (!user || !guruSessionId) return;
     
     try {
-        const response = await fetch('http://localhost:3000/api/guru/save-message', {
+        const response = await fetch(`${API_BASE_URL}/guru/save-message`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
