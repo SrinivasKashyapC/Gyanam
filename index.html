@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GyaanamAI - Path of Knowledge</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Chart.js for Performance Graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="firebase-config.js"></script>
+</head>
+<body>
+    <div class="main-container">
+        <div class="header">
+            <div class="logo-container">
+                <div class="logo">Gyaanam AI</div>
+                <div class="subtitle">Path of Knowledge</div>
+            </div>
+            <div class="header-actions">
+                <button onclick="window.location.href='courses.html'" class="back-to-courses-btn" title="Back to Courses">
+                    <i class="fas fa-arrow-left"></i> Courses
+                </button>
+                <div id="userInfo" class="user-info"></div>
+            </div>
+        </div>
+
+        <div class="subject-selector-container">
+            <div class="selector-header">
+                <h2>🎓 Choose Your Subject</h2>
+                <p>Select from 100+ topics to unlock videos, notes, and quizzes instantly!</p>
+            </div>
+            
+            <div class="subjects-grid" id="subjectsGrid">
+                <!-- Subjects will be dynamically loaded here -->
+            </div>
+            
+            <div id="selectedSubjectBanner" class="selected-subject-banner" style="display: none;">
+                <div class="banner-content">
+                    <span class="selected-icon">✅</span>
+                    <span class="selected-text">Currently Learning: <strong id="currentSubjectName"></strong></span>
+                    <button onclick="clearSelectedSubject()" class="change-subject-btn">Change Subject</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="videos-section">
+            <h2 class="section-title videos-title">🎬 YOUR VIDEOS</h2>
+            <div class="video-tip-banner">
+                <i class="fas fa-lightbulb"></i>
+                <span>If your choice is to prepare, choose the longer videos. If you are here for a glimpse or revision, you can opt the shorter ones! Learn your way!</span>
+            </div>
+            <div id="videosContainer" class="content-container">
+                <p class="placeholder-text">
+                    🎯 Ask about programming topics in the chat to see curated YouTube videos (10+ minutes) here!
+                </p>
+            </div>
+        </div>
+
+        <div class="notes-section">
+            <h2 class="section-title notes-title">📚 STUDY NOTES</h2>
+            <div id="notesContainer" class="content-container">
+                <p class="placeholder-text">
+                    📖 Ask to learn any subject (e.g., "Learn C language", "Explain Calculus") to generate comprehensive study notes!
+                </p>
+            </div>
+            <div id="notesActions" class="notes-actions">
+                <button onclick="exportNotesPDF()" class="action-button export-button">
+                    📄 Export PDF
+                </button>
+                <button onclick="showSaveNotesModal()" class="action-button" style="background: linear-gradient(45deg, #10ac84, #1dd1a1);">
+                    💾 Save Notes
+                </button>
+                <button onclick="clearNotes()" class="action-button clear-button">
+                    🗑️ Clear Notes
+                </button>
+            </div>
+        </div>
+
+        <div class="quiz-section">
+            <h2 class="section-title quiz-title">📝 PARIKSHA ZONE</h2>
+            <div id="quizContainer" class="content-container">
+                <p class="placeholder-text">
+                    🎯 Ready to test your knowledge? Click below to start a quiz based on your chosen topic!
+                </p>
+            </div>
+            <div id="quizActions" class="notes-actions">
+                <button id="startQuizButton" class="action-button" style="background: linear-gradient(45deg, #ff6b6b, #feca57);" onclick="console.log('Button clicked!'); startQuizConfirmation();">
+                    🚀 Start Quiz
+                </button>
+            </div>
+        </div>
+
+        <div class="pusthaka-section">
+            <h2 class="section-title pusthaka-title">📖 PUSTHAKA ZONE</h2>
+            <div id="pusthakaContainer" class="content-container">
+                <p class="placeholder-text">
+                    📚 Your saved study notes will appear here. Generate notes by asking about topics to build your personal knowledge library!
+                </p>
+            </div>
+            <div id="pusthakaActions" class="notes-actions">
+                <button id="loadNotesButton" class="action-button" style="background: linear-gradient(45deg, #48dbfb, #0abde3);" onclick="loadUserNotes();">
+                    📚 Load My Notes
+                </button>
+                <button id="refreshNotesButton" class="action-button" style="background: linear-gradient(45deg, #10ac84, #1dd1a1);" onclick="refreshUserNotes();">
+                    🔄 Refresh
+                </button>
+            </div>
+        </div>
+
+        <!-- Floating Guru Button -->
+        <a href="guru.html" class="floating-guru-btn" title="Ask your doubts to Guru">
+            <div class="guru-float-avatar">🧙‍♂️</div>
+            <div class="guru-float-tooltip">Any doubts?</div>
+        </a>
+
+        <!-- Progress Zone - Always Visible at Bottom -->
+        <div class="progress-zone-section" id="progressZoneSection">
+            <div class="progress-zone-header">
+                <div>
+                    <h2 class="section-title progress-title">📊 PROGRESS ZONE - Your Learning Analytics</h2>
+                </div>
+                <button id="clearProgressBtn" class="clear-progress-btn" title="Clear all progress data">
+                    🗑️ Clear All Progress
+                </button>
+            </div>
+            
+            <div class="progress-zone-content">
+                <!-- Statistics Cards -->
+                <div class="stats-cards-grid" id="statsCardsGrid">
+                    <div class="stat-card">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-value" id="totalQuizzesValue">0</div>
+                        <div class="stat-label">Quizzes Taken</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-value" id="averageScoreValue">0%</div>
+                        <div class="stat-label">Average Score</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🏆</div>
+                        <div class="stat-value" id="highestScoreValue">0%</div>
+                        <div class="stat-label">Highest Score</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📚</div>
+                        <div class="stat-value" id="subjectsStudiedValue">0</div>
+                        <div class="stat-label">Subjects Studied</div>
+                    </div>
+                </div>
+                
+                <!-- Performance Graph -->
+                <div class="performance-chart-container">
+                    <div class="chart-header">
+                        <h3>📈 Performance Over Time</h3>
+                        <div class="chart-filters">
+                            <select id="subjectFilter" class="chart-filter-select">
+                                <option value="all">All Subjects</option>
+                            </select>
+                            <select id="timeFilter" class="chart-filter-select">
+                                <option value="all">All Time</option>
+                                <option value="week">Last 7 Days</option>
+                                <option value="month">Last 30 Days</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="chart-canvas-wrapper" style="position: relative; height: 350px; width: 100%;">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Recent Quiz Results -->
+                <div class="recent-results-container">
+                    <h3>🎯 Recent Quiz Results</h3>
+                    <div id="recentResultsList" class="recent-results-list">
+                        <div class="no-results-placeholder">
+                            <div style="font-size: 3rem; margin-bottom: 15px;">📊</div>
+                            <p>No quiz results yet!</p>
+                            <p style="font-size: 14px; color: rgba(255,255,255,0.6);">Take a quiz to see your performance here.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Subject Breakdown -->
+                <div class="subject-breakdown-container">
+                    <h3>📖 Subject Performance Breakdown</h3>
+                    <div id="subjectBreakdownList" class="subject-breakdown-list">
+                        <div class="no-results-placeholder">
+                            <p>Take quizzes on different subjects to see your breakdown!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Difficulty Selection Modal -->
+    <div id="difficultyModal" class="modal" style="display: none;">
+        <div class="modal-content difficulty-modal-content">
+            <span class="close" onclick="closeDifficultyModal()">&times;</span>
+            <div class="modal-header">
+                <h2>🎯 Choose Your Challenge Level</h2>
+                <p>Select difficulty for your <strong id="quizTopicDisplay"></strong> quiz</p>
+            </div>
+            
+            <div class="difficulty-container">
+                <div class="difficulty-card easy-card" onclick="startQuizWithDifficulty('easy')">
+                    <div class="difficulty-header">
+                        <div class="difficulty-icon">🟢</div>
+                        <h3>Beginner</h3>
+                    </div>
+                    <div class="difficulty-info">
+                        <p>Perfect for getting started</p>
+                        <ul>
+                            <li>Basic concepts & definitions</li>
+                            <li>Simple examples</li>
+                            <li>Foundation building</li>
+                        </ul>
+                    </div>
+                    <div class="difficulty-footer">
+                        <span class="question-count">10 Questions</span>
+                        <span class="time-estimate">~5 mins</span>
+                    </div>
+                </div>
+                
+                <div class="difficulty-card medium-card" onclick="startQuizWithDifficulty('medium')">
+                    <div class="difficulty-header">
+                        <div class="difficulty-icon">🟡</div>
+                        <h3>Intermediate</h3>
+                    </div>
+                    <div class="difficulty-info">
+                        <p>For those with some experience</p>
+                        <ul>
+                            <li>Practical applications</li>
+                            <li>Real-world examples</li>
+                            <li>Problem-solving</li>
+                        </ul>
+                    </div>
+                    <div class="difficulty-footer">
+                        <span class="question-count">15 Questions</span>
+                        <span class="time-estimate">~8 mins</span>
+                    </div>
+                </div>
+                
+                <div class="difficulty-card hard-card" onclick="startQuizWithDifficulty('hard')">
+                    <div class="difficulty-header">
+                        <div class="difficulty-icon">🔴</div>
+                        <h3>Advanced</h3>
+                    </div>
+                    <div class="difficulty-info">
+                        <p>Challenge your expertise</p>
+                        <ul>
+                            <li>Complex scenarios</li>
+                            <li>Edge cases & optimization</li>
+                            <li>Critical thinking</li>
+                        </ul>
+                    </div>
+                    <div class="difficulty-footer">
+                        <span class="question-count">20 Questions</span>
+                        <span class="time-estimate">~12 mins</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save Notes Modal -->
+    <div id="saveNotesModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeSaveNotesModal()">&times;</span>
+            <div class="modal-header">
+                <h2>💾 Save Your Notes</h2>
+                <p>Give your notes a title to save them to your knowledge library</p>
+            </div>
+            
+            <div style="padding: 20px 0;">
+                <label for="noteTitle" style="display: block; color: white; margin-bottom: 10px; font-weight: bold;">
+                    📝 Note Title:
+                </label>
+                <input 
+                    type="text" 
+                    id="noteTitle" 
+                    placeholder="e.g., Python Basics, Machine Learning Concepts, Calculus Notes..." 
+                    style="width: 100%; padding: 15px; border: none; border-radius: 8px; background: rgba(255,255,255,0.1); color: white; font-size: 16px; margin-bottom: 15px;"
+                    maxlength="100"
+                />
+                <div style="font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 20px;">
+                    Choose a descriptive title to easily find your notes later
+                </div>
+                
+                <div style="display: flex; gap: 15px; justify-content: center;">
+                    <button onclick="saveCurrentNotes(event)" class="action-button" style="background: linear-gradient(45deg, #10ac84, #1dd1a1); padding: 12px 25px;">
+                        💾 Save to Library
+                    </button>
+                    <button onclick="closeSaveNotesModal()" class="action-button" style="background: linear-gradient(45deg, #6c757d, #495057); padding: 12px 25px;">
+                        ❌ Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-text">
+                <p>Made with ❤️ by <strong>Srinivas Kashyap</strong></p>
+            </div>
+            <div class="social-links">
+                <a href="#" class="social-link linkedin" title="LinkedIn">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+                <a href="#" class="social-link github" title="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="#" class="social-link instagram" title="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- No Distraction Mode Modal for Videos -->
+    <div id="noDistractionModal" class="no-distraction-modal">
+        <div class="no-distraction-content">
+            <div class="distraction-header">
+                <h3 id="videoTitle">🎯 No Distraction Mode</h3>
+                <div class="escape-hint">Press ESC to exit</div>
+            </div>
+            <div class="video-container">
+                <iframe id="distractionVideoFrame" 
+                        width="100%" 
+                        height="100%" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Configuration - Load first -->
+    <script src="config.js"></script>
+    
+    <!-- MongoDB Configuration -->
+    <script src="mongodb-config.js"></script>
+    <script src="mongodb-quiz-config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

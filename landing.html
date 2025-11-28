@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gyaanam AI - Path of Knowledge | Your AI Learning Companion</title>
+    <link rel="stylesheet" href="landing-styles.css">
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=The+Last+Shuriken&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <div class="logo">Gyaanam AI</div>
+                <div class="nav-subtitle">Path of Knowledge</div>
+            </div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#updates">Updates</a>
+                <a href="#about">About</a>
+                <button onclick="showAuthModal()" class="auth-button">
+                    <i class="fas fa-user"></i> Login
+                </button>
+                <button onclick="handleStartLearning()" class="cta-button" id="startLearningBtn">Start Learning</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    Master Any Subject with
+                    <span class="gradient-text">AI-Powered Learning</span>
+                </h1>
+                <p class="hero-description">
+                    Gyaanam AI revolutionizes education with personalized chat, curated videos, 
+                    comprehensive notes, and adaptive quizzes. Your complete learning ecosystem 
+                    powered by advanced AI technology.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#updates" class="primary-button" onclick="event.preventDefault(); document.getElementById('updates').scrollIntoView({behavior: 'smooth'});">
+                        <i class="fas fa-sparkles"></i>
+                        See What's New
+                    </a>
+                    <button class="secondary-button" onclick="scrollToFeatures()">
+                        <i class="fas fa-play"></i>
+                        See How It Works
+                    </button>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">4</span>
+                        <span class="stat-label">Learning Modes</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">∞</span>
+                        <span class="stat-label">Topics Covered</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">24/7</span>
+                        <span class="stat-label">AI Availability</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="floating-cards">
+                    <div class="card chat-card">
+                        <i class="fas fa-comments"></i>
+                        <span>AI Chat</span>
+                    </div>
+                    <div class="card video-card">
+                        <i class="fab fa-youtube"></i>
+                        <span>Videos</span>
+                    </div>
+                    <div class="card notes-card">
+                        <i class="fas fa-sticky-note"></i>
+                        <span>Notes</span>
+                    </div>
+                    <div class="card quiz-card">
+                        <i class="fas fa-brain"></i>
+                        <span>Quiz</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">🌟 WHY CHOOSE GYAANAM AI?</h2>
+            <p class="section-subtitle">Experience the future of personalized learning</p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon chat-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>🧙‍♂️ GURU ZONE - AI CHATBOT</h3>
+                    <p>Meet your AI Guru! Dedicated chatbot with conversation memory that remembers your learning journey. Get detailed explanations, ask doubts, and receive personalized guidance 24/7.</p>
+                    <ul class="feature-list">
+                        <li>Conversation memory with MongoDB</li>
+                        <li>Gemini & Groq AI with auto-fallback</li>
+                        <li>Detailed educational responses (200-300 words)</li>
+                        <li>Beautiful markdown & code formatting</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon video-icon">
+                        <i class="fab fa-youtube"></i>
+                    </div>
+                    <h3>🎬 CURATED VIDEO LEARNING</h3>
+                    <p>Access hand-picked educational videos from YouTube, filtered for quality and relevance. Learn visually with the best content creators.</p>
+                    <ul class="feature-list">
+                        <li>Smart video recommendations</li>
+                        <li>Quality-filtered content (5+ mins)</li>
+                        <li>Topic-specific search algorithms</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon notes-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3>📚 COMPREHENSIVE STUDY NOTES</h3>
+                    <p>Generate detailed, structured notes automatically based on your conversations. Perfect for revision and quick reference.</p>
+                    <ul class="feature-list">
+                        <li>AI-generated summaries</li>
+                        <li>Structured learning materials</li>
+                        <li>Key concept highlighting</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon quiz-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>📝 PARIKSHA ZONE</h3>
+                    <p>Test your knowledge with our adaptive quizzes that adjust to your skill level and provide detailed feedback.</p>
+                    <ul class="feature-list">
+                        <li>3 difficulty levels (Beginner/Intermediate/Advanced)</li>
+                        <li>10-20 questions per quiz</li>
+                        <li>Instant feedback & explanations</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon quiz-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>📖PUSTHAKA ZONE</h3>
+                    <p>Save your short notes here for any of your topics, and you can revisit them whenever you want!</p>
+                    <ul class="feature-list">
+                        <li>AI-Generated Notes</li>
+                        <li>Easy organization by topic</li>
+                        <li>Quick access for revision</li>
+                    </ul>
+                </div>
+                 <div class="feature-card">
+                    <div class="feature-icon quiz-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>RESULTS ZONE 📈</h3>
+                    <p>Track your progress and performance over time with detailed analytics and insights.</p>
+                    <ul class="feature-list">
+                        <li>AI-Generated Performance Reports</li>
+                        <li>Topic-wise Progress Tracking</li>
+                        <li>Customizable Study Goals</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Updates Section -->
+    <section id="updates" class="updates">
+        <div class="container">
+            <h2 class="section-title">🚀 LATEST UPDATES & IMPROVEMENTS</h2>
+            <p class="section-subtitle">We're constantly evolving to enhance your learning experience</p>
+            
+            <div class="updates-timeline">
+                <div class="update-item">
+                    <div class="update-icon new">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="update-content">
+                        <h3>🧙‍♂️ Guru Zone - AI Chatbot with Memory</h3>
+                        <p class="update-date">November 2024 - Latest</p>
+                        <p>Meet your AI Guru! Dedicated chatbot page with conversation memory powered by MongoDB. Get detailed responses for educational queries, save chat history, and continue conversations seamlessly. Features elegant floating guru button with animations.</p>
+                    </div>
+                </div>
+
+                <div class="update-item">
+                    <div class="update-icon enhanced">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="update-content">
+                        <h3>Custom Course Creation System</h3>
+                        <p class="update-date">November 2024</p>
+                        <p>Create your own personalized courses! Select from 180+ subjects across multiple categories. Features intuitive modal interface with multi-select functionality and localStorage persistence. Courses page fully rebranded with orange/black theme.</p>
+                    </div>
+                </div>
+
+                <div class="update-item">
+                    <div class="update-icon improved">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <div class="update-content">
+                        <h3>Enhanced AI Response Formatting</h3>
+                        <p class="update-date">November 2024</p>
+                        <p>Beautiful markdown rendering with syntax-highlighted code blocks, inline code formatting, bold text, and proper list structures. Guru provides 200-300 word detailed responses for educational keywords like 'explain', 'teach', 'learn'.</p>
+                    </div>
+                </div>
+
+                <div class="update-item">
+                    <div class="update-icon new">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="update-content">
+                        <h3>Dual AI Integration</h3>
+                        <p class="update-date">Recently Enhanced</p>
+                        <p>Seamless fallback between Gemini (gemini-1.5-flash) and Groq (mixtral-8x7b-32768) APIs. Automatic failover ensures uninterrupted learning experience with intelligent content filtering across all interactions.</p>
+                    </div>
+                </div>
+
+                <div class="update-item">
+                    <div class="update-icon ui">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <div class="update-content">
+                        <h3>Complete UI/UX Overhaul</h3>
+                        <p class="update-date">Design Update</p>
+                        <p>The Last Shuriken font integration, orange (#ff8a65) and dark blue (#2c2c54) theme throughout. Floating animations, glowing effects, video tip banners, improved note previews, and mobile-responsive design.</p>
+                    </div>
+                </div>
+
+                <div class="update-item">
+                    <div class="update-icon improved">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div class="update-content">
+                        <h3>Adaptive Quiz System</h3>
+                        <p class="update-date">Performance Boost</p>
+                        <p>Choose your challenge level with Beginner, Intermediate, and Advanced difficulty settings. Optimized question count (10-20) for better performance. Instant feedback with detailed explanations in Pariksha Zone.</p>
+                    </div>
+                </div>
+
+                <div class="update-item">
+                    <div class="update-icon enhanced">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div class="update-content">
+                        <h3>MongoDB Backend Integration</h3>
+                        <p class="update-date">Infrastructure Update</p>
+                        <p>Robust MongoDB Atlas backend for notes, quiz results, and conversation history. Session-based chat persistence, user progress tracking, and scalable data storage for seamless learning experience.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="coming-soon">
+                <h3>🔮 Coming Soon</h3>
+                <div class="coming-features">
+                    <span class="feature-tag">Advanced Progress Dashboard</span>
+                    <span class="feature-tag">Learning Streaks & Rewards</span>
+                    <span class="feature-tag">Study Groups</span>
+                    <span class="feature-tag">Smart Study Reminders</span>
+                    <span class="feature-tag">PDF Export for Notes</span>
+                    <span class="feature-tag">Voice-to-Text Chat</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Transform Your Learning Journey?</h2>
+                <p>Join learners who have discovered the power of AI-assisted education with Guru Zone, custom courses, and adaptive quizzes</p>
+                <a href="index.html" class="cta-main-button">
+                    <i class="fas fa-rocket"></i>
+                    Start Learning Now
+                </a>
+                <p class="cta-note">Sign up • Create custom courses • Chat with AI Guru • Track your progress!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-text">
+                <p>Made with ❤️ by <strong>Srinivas Kashyap</strong></p>
+            </div>
+            <div class="social-links">
+                <a href="#" class="social-link linkedin" title="LinkedIn">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+                <a href="#" class="social-link github" title="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="#" class="social-link instagram" title="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Authentication Modal -->
+    <div id="authModal" class="auth-modal">
+        <div class="auth-modal-content">
+            <div class="auth-modal-header">
+                <h2 id="authModalTitle">Join Gyaanam AI</h2>
+                <button class="auth-close" onclick="hideAuthModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="switchAuthTab('login')">Login</button>
+                <button class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button>
+            </div>
+            
+            <!-- Login Form -->
+            <div id="loginForm" class="auth-form active">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" placeholder="your@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Your password" required>
+                </div>
+                <button onclick="loginUser()" class="auth-submit-btn" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </div>
+            
+            <!-- Signup Form -->
+            <div id="signupForm" class="auth-form">
+                <div class="form-group">
+                    <label for="signupName">Name</label>
+                    <input type="text" id="signupName" placeholder="Your full name" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" placeholder="your@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" placeholder="Create a password (min 6 characters)" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+                </div>
+                <button onclick="signupUser()" class="auth-submit-btn" id="signupBtn">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+            </div>
+            
+            <div id="authMessage" class="auth-message"></div>
+        </div>
+    </div>
+
+    <!-- User Profile Modal -->
+    <div id="userProfileModal" class="auth-modal">
+        <div class="auth-modal-content">
+            <div class="auth-modal-header">
+                <h2>Your Profile</h2>
+                <button class="auth-close" onclick="hideUserProfile()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div id="userProfileContent" class="user-profile-content">
+                <!-- User profile content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="landing-script.js"></script>
+</body>
+</html>

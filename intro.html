@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to GyaanamAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=The+Last+Shuriken&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: #000;
+            overflow: hidden;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Video Container */
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #000;
+            z-index: 1000;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .video-container.fade-out {
+            opacity: 0;
+        }
+
+        .intro-video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #000;
+        }
+
+        /* Skip Button */
+        .skip-button {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(255, 139, 101, 0.9);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            z-index: 1001;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .skip-button:hover {
+            background: rgba(255, 139, 101, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 139, 101, 0.4);
+        }
+
+        /* Curtain Effect */
+        .curtain-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999;
+            pointer-events: none;
+            display: none;
+        }
+
+        .curtain-left, .curtain-right {
+            position: absolute;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(135deg, #2c2c54 0%, #1a1a2e 50%, #16213e 100%);
+            transition: transform 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: inset 0 0 100px rgba(255, 139, 101, 0.1);
+        }
+
+        .curtain-left {
+            left: 0;
+            transform-origin: left center;
+        }
+
+        .curtain-right {
+            right: 0;
+            transform-origin: right center;
+        }
+
+        /* Curtain Patterns */
+        .curtain-left::before, .curtain-right::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 2px,
+                rgba(255, 139, 101, 0.1) 2px,
+                rgba(255, 139, 101, 0.1) 4px
+            );
+        }
+
+        /* Curtain Open Animation */
+        .curtains-open .curtain-left {
+            transform: translateX(-100%);
+        }
+
+        .curtains-open .curtain-right {
+            transform: translateX(100%);
+        }
+
+        /* Landing Page Container */
+        .landing-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        .landing-page.visible {
+            opacity: 1;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #2c2c54 0%, #1a1a2e 50%, #16213e 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 998;
+            opacity: 1;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 139, 101, 0.3);
+            border-top: 4px solid #ff8b65;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 30px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #ff8b65;
+            font-family: 'The Last Shuriken', sans-serif;
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(255, 139, 101, 0.5);
+        }
+
+        .loading-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .skip-button {
+                top: 20px;
+                right: 20px;
+                padding: 10px 20px;
+                font-size: 13px;
+            }
+
+            .loading-text {
+                font-size: 20px;
+            }
+        }
+
+        /* Video Play Icon for Mobile */
+        .play-overlay {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 139, 101, 0.9);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1002;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .play-overlay:hover {
+            background: rgba(255, 139, 101, 1);
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .play-overlay::before {
+            content: '▶';
+            font-size: 30px;
+            color: white;
+            margin-left: 3px;
+        }
+
+        .mobile-message {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            display: none;
+            z-index: 1002;
+        }
+
+        /* Intro Content Overlay */
+        .intro-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                135deg,
+                rgba(44, 44, 84, 0.1) 0%,
+                rgba(26, 26, 46, 0.3) 50%,
+                rgba(22, 33, 62, 0.1) 100%
+            );
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1001;
+            pointer-events: none;
+            padding: 40px 20px;
+        }
+
+        .intro-header {
+            text-align: center;
+            color: white;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
+            animation: fadeInDown 1.5s ease-out;
+        }
+
+        .intro-title {
+            font-family: 'The Last Shuriken', sans-serif;
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #ff8b65, #ff6b9d, #c44569);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
+            filter: drop-shadow(0 4px 15px rgba(255, 139, 101, 0.3));
+        }
+
+        .intro-subtitle {
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 300;
+            opacity: 0.9;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .intro-footer {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            animation: fadeInUp 2s ease-out;
+        }
+
+        .intro-tagline {
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 400;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .intro-features {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .intro-feature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 300;
+            opacity: 0.8;
+            background: rgba(255, 139, 101, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 139, 101, 0.2);
+        }
+
+        .intro-feature i {
+            color: #ff8b65;
+            font-size: 1.1rem;
+        }
+
+        /* Progress Indicator */
+        .video-progress {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ff8b65, #ff6b9d);
+            z-index: 1003;
+            transition: width 0.1s ease;
+            border-radius: 0 3px 0 0;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        /* Mobile Responsive for Intro Content */
+        @media (max-width: 768px) {
+            .intro-title {
+                font-size: 2.5rem;
+            }
+
+            .intro-subtitle {
+                font-size: 1.1rem;
+                padding: 0 10px;
+            }
+
+            .intro-tagline {
+                font-size: 1rem;
+            }
+
+            .intro-features {
+                gap: 15px;
+            }
+
+            .intro-feature {
+                font-size: 0.85rem;
+                padding: 6px 12px;
+            }
+
+            .intro-overlay {
+                padding: 30px 15px;
+            }
+        }
+
+        /* Typewriter Effect Overlay */
+        .typewriter-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #2c2c54 0%, #1a1a2e 50%, #16213e 100%);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1500;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .typewriter-overlay.visible {
+            opacity: 1;
+        }
+
+        .typewriter-container {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .typewriter-text {
+            font-family: 'The Last Shuriken', sans-serif;
+            font-size: 4rem;
+            color: #ff8b65;
+            text-shadow: 0 6px 20px rgba(255, 139, 101, 0.4);
+            line-height: 1.2;
+            min-height: 2.4em;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .typewriter-line {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInLine 0.8s ease-out forwards;
+        }
+
+        .typewriter-line.line-1 {
+            animation-delay: 0.5s;
+        }
+
+        .typewriter-line.line-2 {
+            animation-delay: 2.5s;
+        }
+
+        .typewriter-char {
+            opacity: 0;
+            color: #ff8b65;
+            animation: typeChar 0.1s ease-out forwards;
+        }
+
+        /* Cursor effect */
+        .typewriter-cursor {
+            display: inline-block;
+            width: 3px;
+            height: 1.2em;
+            background: #ff8b65;
+            margin-left: 2px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes fadeInLine {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes typeChar {
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes blink {
+            0%, 50% {
+                opacity: 1;
+            }
+            51%, 100% {
+                opacity: 0;
+            }
+        }
+
+        /* Mobile Responsive for Typewriter */
+        @media (max-width: 768px) {
+            .typewriter-text {
+                font-size: 2.5rem;
+                padding: 0 20px;
+            }
+            
+            .typewriter-container {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .typewriter-text {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Video Container -->
+    <div class="video-container" id="videoContainer">
+        <video class="intro-video" id="introVideo" preload="auto" muted>
+            <source src="gyanamvideo.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        
+        <button class="skip-button" onclick="skipIntro()">
+            ⏭️ Skip Intro
+        </button>
+        
+        <!-- Video Progress Bar -->
+        <div class="video-progress" id="videoProgress" style="width: 0%"></div>
+        
+        <!-- Play overlay for mobile -->
+        <div class="play-overlay" id="playOverlay" onclick="playVideo()"></div>
+        
+        <div class="mobile-message" id="mobileMessage">
+            Tap to play video
+        </div>
+    </div>
+
+    <!-- Typewriter Effect Overlay -->
+    <div class="typewriter-overlay" id="typewriterOverlay">
+        <div class="typewriter-container">
+            <div class="typewriter-text" id="typewriterText">
+                <!-- Content will be dynamically added -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Curtain Effect -->
+    <div class="curtain-container" id="curtainContainer">
+        <div class="curtain-left"></div>
+        <div class="curtain-right"></div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loader"></div>
+        <div class="loading-text">GyaanamAI</div>
+        <div class="loading-subtitle">Preparing your learning experience...</div>
+    </div>
+
+    <!-- Landing Page Container -->
+    <div class="landing-page" id="landingPage">
+        <!-- Landing page content will be loaded here -->
+    </div>
+
+    <script>
+        const videoContainer = document.getElementById('videoContainer');
+        const introVideo = document.getElementById('introVideo');
+        const curtainContainer = document.getElementById('curtainContainer');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const landingPage = document.getElementById('landingPage');
+        const playOverlay = document.getElementById('playOverlay');
+        const mobileMessage = document.getElementById('mobileMessage');
+        const videoProgress = document.getElementById('videoProgress');
+        const typewriterOverlay = document.getElementById('typewriterOverlay');
+        const typewriterText = document.getElementById('typewriterText');
+
+        let isVideoLoaded = false;
+
+        // Load landing page content
+        function loadLandingPage() {
+            // Simplified - just mark as loaded since we'll navigate directly
+            console.log('Landing page ready for navigation');
+            hideLoadingIfReady();
+        }
+
+        // Hide loading overlay when video is ready
+        function hideLoadingIfReady() {
+            if (isVideoLoaded) {
+                setTimeout(() => {
+                    loadingOverlay.classList.add('hidden');
+                }, 500);
+            }
+        }
+
+        // Video loaded handler
+        function onVideoLoaded() {
+            console.log('Video loaded successfully');
+            isVideoLoaded = true;
+            hideLoadingIfReady();
+            
+            // Try to play the video once it's loaded
+            setTimeout(() => {
+                introVideo.play().catch(e => {
+                    console.log('Auto-play failed after load:', e);
+                    handleMobileRestrictions();
+                });
+            }, 100);
+        }
+
+        // Play video (for mobile)
+        function playVideo() {
+            introVideo.play().then(() => {
+                playOverlay.style.display = 'none';
+                mobileMessage.style.display = 'none';
+            }).catch(e => {
+                console.log('Video play failed:', e);
+            });
+        }
+
+        // Update video progress
+        function updateProgress() {
+            if (introVideo.duration) {
+                const progress = (introVideo.currentTime / introVideo.duration) * 100;
+                videoProgress.style.width = progress + '%';
+            }
+        }
+
+        // Typewriter effect function
+        function typeWriter(text, element, speed = 100) {
+            return new Promise((resolve) => {
+                let i = 0;
+                const timer = setInterval(() => {
+                    if (i < text.length) {
+                        const char = document.createElement('span');
+                        char.className = 'typewriter-char';
+                        char.textContent = text.charAt(i);
+                        char.style.animationDelay = '0s';
+                        element.appendChild(char);
+                        i++;
+                    } else {
+                        clearInterval(timer);
+                        resolve();
+                    }
+                }, speed);
+            });
+        }
+
+        // Show typewriter effect
+        function showTypewriterEffect() {
+            console.log('Starting typewriter effect...');
+            
+            // Hide video container
+            videoContainer.style.display = 'none';
+            
+            // Show typewriter overlay
+            typewriterOverlay.style.display = 'flex';
+            setTimeout(() => {
+                typewriterOverlay.classList.add('visible');
+            }, 100);
+
+            // Create lines
+            const line1 = document.createElement('div');
+            line1.className = 'typewriter-line line-1';
+            
+            const line2 = document.createElement('div');
+            line2.className = 'typewriter-line line-2';
+            
+            typewriterText.appendChild(line1);
+            typewriterText.appendChild(line2);
+
+            // Type first line after delay
+            setTimeout(async () => {
+                await typeWriter('Your subjects,', line1, 120);
+                
+                // Add cursor to first line briefly
+                const cursor1 = document.createElement('span');
+                cursor1.className = 'typewriter-cursor';
+                line1.appendChild(cursor1);
+                
+                // Wait then start second line
+                setTimeout(async () => {
+                    // Remove cursor from first line
+                    cursor1.remove();
+                    
+                    await typeWriter('Our responsibility', line2, 120);
+                    
+                    // Add final cursor
+                    const cursor2 = document.createElement('span');
+                    cursor2.className = 'typewriter-cursor';
+                    line2.appendChild(cursor2);
+                    
+                    // Wait then fade out and show landing page
+                    setTimeout(() => {
+                        cursor2.remove();
+                        fadeToLandingPage();
+                    }, 2000);
+                    
+                }, 1000);
+            }, 1000);
+        }
+
+        // Fade to landing page
+        function fadeToLandingPage() {
+            console.log('Fading to landing page...');
+            
+            typewriterOverlay.classList.remove('visible');
+            
+            setTimeout(() => {
+                window.location.href = 'landing.html';
+            }, 1000);
+        }
+
+        // Open curtains and reveal landing page
+        function openCurtains() {
+            console.log('Video ended, starting typewriter sequence...');
+            showTypewriterEffect();
+        }
+
+        // Skip intro function
+        function skipIntro() {
+            console.log('Skipping intro...');
+            introVideo.pause();
+            
+            // Direct navigation to landing page
+            window.location.href = 'landing.html';
+        }
+
+        // Handle mobile autoplay restrictions
+        function handleMobileRestrictions() {
+            // Check if we're on mobile
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                // Show play overlay for mobile
+                playOverlay.style.display = 'flex';
+                mobileMessage.style.display = 'block';
+                
+                // Auto-hide after 3 seconds
+                setTimeout(() => {
+                    if (introVideo.paused) {
+                        mobileMessage.style.display = 'none';
+                    }
+                }, 3000);
+            }
+        }
+
+        // Initialize when page loads
+        function initialize() {
+            console.log('Initializing intro page...');
+            
+            // Mark landing page as ready (simplified)
+            loadLandingPage();
+            
+            // Set up video event listeners
+            introVideo.addEventListener('loadeddata', onVideoLoaded);
+            introVideo.addEventListener('canplay', () => {
+                console.log('Video can play');
+            });
+            introVideo.addEventListener('loadstart', () => {
+                console.log('Video load started');
+            });
+            introVideo.addEventListener('timeupdate', updateProgress);
+            introVideo.addEventListener('ended', openCurtains);
+            introVideo.addEventListener('error', (e) => {
+                console.error('Video error:', e);
+                skipIntro(); // Skip to landing page if video fails
+            });
+
+            // Try to autoplay video after a short delay
+            setTimeout(() => {
+                introVideo.play().catch(e => {
+                    console.log('Initial autoplay failed (expected on mobile):', e);
+                    handleMobileRestrictions();
+                });
+            }, 500);
+            
+            // Auto-skip after 30 seconds (safety fallback)
+            setTimeout(() => {
+                if (videoContainer.style.display !== 'none') {
+                    console.log('Auto-skipping after timeout');
+                    skipIntro();
+                }
+            }, 30000);
+        }
+
+        // Start everything when DOM is ready
+        document.addEventListener('DOMContentLoaded', initialize);
+
+        // Handle page visibility change (for mobile browsers)
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden && introVideo.paused && !landingPage.classList.contains('visible')) {
+                handleMobileRestrictions();
+            }
+        });
+    </script>
+</body>
+</html>

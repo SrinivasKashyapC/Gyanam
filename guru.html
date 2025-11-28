@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guru Zone - Gnyaan</title>
+    <link rel="stylesheet" href="guru-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <!-- Background Animation -->
+    <div class="background-gradient"></div>
+    <div class="floating-particles"></div>
+
+    <!-- Header -->
+    <header class="guru-main-header">
+        <div class="header-content">
+            <h1 class="guru-logo">🧘 GURU ZONE</h1>
+            <div class="header-actions">
+                <button onclick="window.location.href='index.html'" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Learning
+                </button>
+                <button onclick="logoutUser()" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="guru-main-container">
+        <!-- Chat History Sidebar -->
+        <div class="chat-history-sidebar" id="chatHistorySidebar">
+            <div class="chat-history-header">
+                <h3>📚 Your Conversations</h3>
+                <button onclick="toggleChatHistory()" class="close-sidebar-btn">✕</button>
+            </div>
+            <div class="chat-history-list" id="chatHistoryList">
+                <!-- Chat items will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="guru-chat-container">
+            <!-- Chat Header -->
+            <div class="chat-header">
+                <div class="chat-header-left">
+                    <div class="guru-avatar-header">🧙‍♂️</div>
+                    <div>
+                        <h2>Your Wise Guru</h2>
+                        <p class="guru-status">🟢 Always here to guide you</p>
+                    </div>
+                </div>
+                <div class="chat-header-actions">
+                    <button onclick="toggleChatHistory()" class="header-btn" title="View history">
+                        📚 History
+                    </button>
+                    <button onclick="createNewChat()" class="header-btn new-chat" title="Start new conversation">
+                        ➕ New Chat
+                    </button>
+                    <button onclick="clearCurrentChat()" class="header-btn clear-chat" title="Clear current conversation">
+                        🧹 Clear
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat Messages Area -->
+            <div class="chat-messages-area" id="guruMessages">
+                <div class="guru-message guru-message-bot">
+                    <div class="message-avatar">🧘</div>
+                    <div class="message-content">
+                        Namaste! 🙏 I am your Guru. Ask me anything related to your studies, and I shall guide you on the path of knowledge.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input Area -->
+            <div class="chat-input-area">
+                <div class="input-container">
+                    <input 
+                        type="text" 
+                        id="guruInput" 
+                        class="guru-input" 
+                        placeholder="Ask your doubt... (e.g., 'Explain Python loops')"
+                        onkeypress="if(event.key === 'Enter') sendGuruMessage()"
+                    />
+                    <button onclick="sendGuruMessage()" class="guru-send-btn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <p class="input-hint">💡 Tip: Use words like "explain", "teach", "learn" for detailed responses!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Config -->
+    <script src="firebase-config.js"></script>
+    
+    <!-- Guru Script -->
+    <script src="guru-script.js"></script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment variables & Secrets
+.env
+.env.local
+.env.production
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build outputs
+dist/
+build/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Test & Debug Files
+test-*.html
+api_usage_*.js
+api_usage_*.py
+*_api_check.py
+quick_api_check.py
+simple_api_check.py
+
+# Documentation (internal use only)
+*_README.md
+*_GUIDE.md
+*_SUMMARY.md
+*Documentation.txt
+BACKEND_README.md
+COURSES_README.md
+COURSES_QUICK_GUIDE.md
+PROGRESS_ZONE_README.md
+PROGRESS_ZONE_QUICK.md
+IMPLEMENTATION_SUMMARY.md
+CSS_Documentation.txt
+HTML_Documentation.txt
+JavaScript_Documentation.txt
