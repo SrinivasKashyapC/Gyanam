@@ -1,6 +1,14 @@
 // Handle Start Learning button click
 function handleStartLearning() {
-    const user = GyaanamAuth.getCurrentUser();
+    // Check if Firebase is initialized
+    if (typeof firebase === 'undefined' || !firebase.auth()) {
+        console.log('Firebase not initialized yet, waiting...');
+        showAuthMessage('Please wait a moment...', 'info');
+        setTimeout(handleStartLearning, 500);
+        return;
+    }
+    
+    const user = firebase.auth().currentUser;
     
     if (user) {
         // User is logged in, redirect to courses page
@@ -521,3 +529,13 @@ document.addEventListener('keydown', function(e) {
         konamiCode = [];
     }
 });
+
+// Initialize Firebase auth listener on page load
+if (typeof firebase !== 'undefined') {
+    firebase.auth().onAuthStateChanged((user) => {
+        const startLearningBtn = document.getElementById('startLearningBtn');
+        if (user && startLearningBtn) {
+            console.log('User logged in on landing page:', user.email);
+        }
+    });
+}

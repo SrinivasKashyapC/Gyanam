@@ -1,3 +1,22 @@
+// Helper functions for user-specific custom courses
+function getUserCustomCoursesKey() {
+    const user = firebase.auth().currentUser;
+    if (!user) return null;
+    return `customCourses_${user.uid}`;
+}
+
+function getUserCustomCourses() {
+    const key = getUserCustomCoursesKey();
+    if (!key) return [];
+    return JSON.parse(localStorage.getItem(key) || '[]');
+}
+
+function saveUserCustomCourses(courses) {
+    const key = getUserCustomCoursesKey();
+    if (!key) return;
+    localStorage.setItem(key, JSON.stringify(courses));
+}
+
 // Course data with relevant subjects for each domain
 const courseData = {
     'neural-networks': {
@@ -202,6 +221,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (logoutBtn) {
             logoutBtn.style.display = 'flex';
         }
+        
+        // Load custom courses for this user
+        loadCustomCourses();
         
         console.log('User authenticated:', userName);
     });
@@ -483,8 +505,14 @@ function saveCustomCourse() {
         return;
     }
     
-    // Get existing custom courses from localStorage
-    let customCourses = JSON.parse(localStorage.getItem('customCourses') || '[]');
+    // Check if user is logged in
+    if (!firebase.auth().currentUser) {
+        alert('Please log in to create custom courses');
+        return;
+    }
+    
+    // Get existing custom courses for this user
+    let customCourses = getUserCustomCourses();
     
     // Create new course
     const newCourse = {
@@ -497,7 +525,7 @@ function saveCustomCourse() {
     
     // Add to custom courses
     customCourses.push(newCourse);
-    localStorage.setItem('customCourses', JSON.stringify(customCourses));
+    saveUserCustomCourses(customCourses);
     
     // Show success message
     alert(`✅ Course "${courseName}" created successfully with ${selectedSubjects.length} subjects!`);
@@ -509,7 +537,7 @@ function saveCustomCourse() {
 
 // Load and display custom courses
 function loadCustomCourses() {
-    const customCourses = JSON.parse(localStorage.getItem('customCourses') || '[]');
+    const customCourses = getUserCustomCourses();
     
     if (customCourses.length === 0) {
         document.getElementById('customCoursesSection').style.display = 'none';
@@ -551,7 +579,7 @@ function loadCustomCourses() {
 
 // Select a custom course
 function selectCustomCourse(courseId) {
-    const customCourses = JSON.parse(localStorage.getItem('customCourses') || '[]');
+    const customCourses = getUserCustomCourses();
     const course = customCourses.find(c => c.id === courseId);
     
     if (!course) {
@@ -579,9 +607,9 @@ function deleteCustomCourse(courseId) {
         return;
     }
     
-    let customCourses = JSON.parse(localStorage.getItem('customCourses') || '[]');
+    let customCourses = getUserCustomCourses();
     customCourses = customCourses.filter(c => c.id !== courseId);
-    localStorage.setItem('customCourses', JSON.stringify(customCourses));
+    saveUserCustomCourses(customCourses);
     
     loadCustomCourses();
 }
